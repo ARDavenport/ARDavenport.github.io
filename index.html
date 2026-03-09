@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+    <title>Weather App</title>
+
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="apple-touch-icon" href="images/apple-touch-icon-iphone60x60.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="images/apple-touchicon-ipad-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="images/apple-touchicon-iphone-retina-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="images/apple-touchicon-ipad-retina-152x152.png">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <!-- <link href="css/lib/flatly.min.css" rel="stylesheet"> -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.7/css/dataTables.dataTables.min.css">
+</head>
+<body class="bg-dark">
+    <div class="d-flex justify-content-center">
+
+        <div id="divWeather" class="col-11 row justify-content-center">
+            <h1 class="text-center text-light mb-4">Current Weather</h1>
+        </div>
+    </div>
+    
+    
+    <footer>
+        <div class="d-flex justify-content-center">
+            <a href="https://open-meteo.com/">
+                Weather data by Open-Meteo.com
+            </a>
+        </div>
+    </footer>
+    <script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://cdn.datatables.net/2.3.7/js/dataTables.min.js"></script>
+    <script>
+   
+        fetch('https://api.open-meteo.com/v1/forecast?latitude=36.1628&longitude=-85.5016&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,rain,showers,snowfall,wind_speed_10m&timezone=America%2FChicago&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch')
+        .then(response => {
+            if(!response.ok){
+                throw new Error('Bad HTTP Response')
+            }
+            return response.json()
+        })
+        
+        .then(data => {
+            txtWeather = data.current
+            
+            if (txtWeather.is_day == 1){
+                txtDayOrNight = "Day"
+            } else {
+                txtDayOrNight = "Night"
+            }
+            
+            document.querySelector('#divWeather').innerHTML += `
+                <div class="card col-12 col-md-6 col-lg-6">
+                    <div class="card-body">
+                        <p class="fw-bold">
+                            <i class="bi bi-compass me-2 text-primary"></i>
+                            Location: Cookeville, TN
+                        </p>
+                        <p>
+                            <i class="bi bi-thermometer-half me-2 text-primary"></i>
+                            Temperature: ${txtWeather.temperature_2m} °F
+                        </p>
+
+                        <p>
+                            <i class="bi bi-thermometer-half me-2 text-primary"></i>
+                            Apparent Temperature: ${txtWeather.apparent_temperature} °F
+                        </p>
+
+                        <p>
+                            <i class="bi bi-moisture me-2 text-primary"></i>
+                            Humidity: ${txtWeather.relative_humidity_2m} %
+                        </p>
+                        
+
+                        <p>
+                            <i class="bi bi-brightness-alt-high-fill me-2 text-primary"></i>
+                            Day or Night: ${txtDayOrNight}
+                        </p>
+
+                        <p>
+                            <i class="bi bi-cloud-drizzle me-2 text-primary"></i>
+                            Precipitation: ${txtWeather.precipitation} inch
+                        </p>
+
+                        <p>
+                            <i class="bi bi-cloud-drizzle-fill me-2 text-primary"></i>
+                            Rain: ${txtWeather.rain} inch
+                        </p>
+
+                        <p>
+                            <i class="bi bi-cloud-rain-heavy-fill me-2 text-primary"></i>
+                            Showers: ${txtWeather.showers} inch
+                        </p>
+
+
+                        <p>
+                            <i class="bi bi-snow me-2 text-primary"></i>
+                            Snowfall: ${txtWeather.snowfall} inch
+                        </p>
+
+                        <p>
+                            <i class="bi bi-wind me-2 text-primary"></i>
+                            Wind Speed: ${txtWeather.wind_speed_10m} mph
+                        </p>
+                    </div>
+                </div>`
+            })
+            
+
+        .catch(error => console.error(error))
+    </script>
+</body>
+</html>
